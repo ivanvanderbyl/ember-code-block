@@ -1,28 +1,39 @@
-/* jshint node: true */
+/* eslint node: true, esnext: false */
 'use strict';
 
-var path = require('path');
-var browserify = require('broccoli-browserify');
-var mergeTrees = require('broccoli-merge-trees');
+let path = require('path');
+var Funnel = require('broccoli-funnel');
+let mergeTrees = require('broccoli-merge-trees');
+let AMDDefineFilter = require('./lib/amd-define-filter');
+var rename = require('broccoli-stew').rename;
 
 module.exports = {
   name: 'ember-code-block',
 
+  treeForVendor(tree) {
+    let trees = [];
 
-  treeForVendor: function(tree){
     // Package up the highlight.js source from its node module.
+    let srcPath = path.join(require.resolve('highlight.js'), '..');
 
-    var src = this.treeGenerator(path.join(require.resolve('highlight.js'), '..', '..'));
-
-    var highlight = browserify(src, {
-      outputFile: 'browserified-highlight.js',
-      require: [['./lib/index.js', {expose: 'highlight.js'}]]
+    var tree = new Funnel(srcPath, {
+      include: ['highlight.js'],
+      destDir: `/highlight.js`,
+      annotation: `Funnel: highlight.js`
     });
-    return mergeTrees([highlight, tree]);
+
+    var srcTree = new AMDDefineFilter(tree, "highlight.js");
+    trees.push(rename(srcTree, function() {
+      return `/highlight/highlight.js`;
+    }));
+
+    return mergeTrees(trees);
   },
 
-  included: function(app) {
-    app.import('vendor/browserified-highlight.js');
-    app.import('vendor/highlight-style.css');
+  included(app) {
+    this._super.included && this._super.included.apply(this, arguments);
+    this.app = app;
+    this.import(path.join('vendor', 'highlight', 'highlight.js'));
+    // app.import('vendor/highlight-style.css');
   }
 };
