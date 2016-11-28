@@ -1,6 +1,21 @@
-# Ember-code-block
+# ember-code-block
 
-This README outlines the details of collaborating on this Ember addon.
+Simple, effective, and customizable code highlighting for Ember.
+
+# Usage
+
+```js
+let code = `
+<html>
+  <body>
+    <ul></ul>
+  </body>
+</html>`;
+```
+
+```hbs
+{{code-block code language="html" indent=8}}
+```
 
 ## Installation
 

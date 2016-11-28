@@ -1,7 +1,7 @@
 {
   "name": "ember-code-block",
   "version": "0.0.0",
-  "description": "The default blueprint for ember-cli addons.",
+  "description": "Simple, effective, and customizable code highlighting for Ember",
   "directories": {
     "doc": "doc",
     "test": "tests"
@@ -11,11 +11,11 @@
     "start": "ember server",
     "test": "ember try:each"
   },
-  "repository": "",
+  "repository": "ivanvanderbyl/ember-code-block",
   "engines": {
-    "node": ">= 0.10.0"
+    "node": ">= 0.12.0"
   },
-  "author": "",
+  "author": "Ivan Vanderbyl",
   "license": "MIT",
   "devDependencies": {
     "broccoli-asset-rev": "^2.4.2",
@@ -33,6 +33,8 @@
     "ember-cli-test-loader": "^1.1.0",
     "ember-cli-uglify": "^1.2.0",
     "ember-data": "^2.7.0",
+    "ember-cli-eslint": "3.0.0",
+    "eslint-plugin-ember-suave": "^1.0.0",
     "ember-disable-prototype-extensions": "^1.1.0",
     "ember-export-application-global": "^1.0.5",
     "ember-load-initializers": "^0.5.1",
@@ -41,10 +43,15 @@
     "loader.js": "^4.0.1"
   },
   "keywords": [
-    "ember-addon"
+    "ember-addon",
+    "code-highlighting",
+    "code-block",
+    "code-snippet"
   ],
   "dependencies": {
-    "ember-cli-babel": "^5.1.6"
+    "broccoli-browserify": "^0.1.0",
+    "ember-cli-babel": "^5.1.6",
+    "highlight.js": "^9.8.0"
   },
   "ember-addon": {
     "configPath": "tests/dummy/config"
