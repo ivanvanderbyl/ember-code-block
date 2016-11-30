@@ -14,7 +14,7 @@ let code = `
 ```
 
 ```hbs
-{{code-block code language="html" indent=8}}
+{{code-block code language="html"}}
 ```
 
 ## Installation
@@ -25,7 +25,7 @@ let code = `
 
 # Svelte Builds
 
-Highlight.js comes with over 80 language packs, but in practice you'll probably
+Highlight.js comes with over 160 language packs, but in practice you'll probably
 only want to use a handfull. You can exclude which packs are loaded by specifying
 either `exclude` or `only` options on the `ember-code-block` config within your
 app's environment:
@@ -38,7 +38,7 @@ ENV['ember-code-block'] = {
 };
 ```
 
-The same options apply for styles (a.k.a themes):
+You will probably want to also configure the `style` (a.k.a theme):
 
 ```js
 ENV['ember-code-block'] = {
@@ -46,11 +46,12 @@ ENV['ember-code-block'] = {
     only: ['json', 'handlebars', 'js']
   },
 
-  styles: {
-    only: ['tomorrow-night-eighties', 'railscasts']
-  }
+  style: 'tomorrow-night-eighties'
 };
 ```
+
+Due to the way the CSS works, you can only load one theme at a time, so you need
+to configure this on load. This is a limitation of `highlight.js`.
 
 ## Under the hood
 
@@ -72,7 +73,7 @@ to `highlight`, an AMD module which exports a default of the core highlight modu
 This allows us to use the standard ES6 loaders in Ember, so we can `import Highlight from "highlight"`
 and it works exactly as we expect.
 
-The problem here is that we haven't yet loaded any lanuage packs, so to do that 
+The problem here is that we haven't yet loaded any language packs, so to do that 
 we need to 
 
 1. convert each language to AMD, 
@@ -81,7 +82,7 @@ we need to
 That second step usually happens automatically in an include supplied by highlight.js,
 but we're going to bypass that and append that register call to each AMD package,
 so that when they get loaded into the Ember AMD environment, they're automatically
-loaded when needed.
+loaded when you first import `"highlight"`.
 
 ## Running
 
