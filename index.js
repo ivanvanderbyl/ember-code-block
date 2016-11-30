@@ -11,6 +11,32 @@ const hljs = require('highlight.js');
 var inclusionFilter = require('./lib/inclusion-filter');
 var exclusionFilter = require('./lib/exclusion-filter');
 
+const STRING_CAMELIZE_REGEXP_1 = (/(\-|\_|\.|\s)+(.)?/g);
+const STRING_CAMELIZE_REGEXP_2 = (/(^|\/)([A-Z])/g);
+
+function camelize(key) {
+  return key.replace(STRING_CAMELIZE_REGEXP_1, function(match, separator, chr) {
+    return chr ? chr.toUpperCase() : '';
+  }).replace(STRING_CAMELIZE_REGEXP_2, function(match, separator, chr) {
+    return match.toLowerCase();
+  });
+}
+function normalizeLanguageName(name) {
+  if (/^\d+/.test(name)) {
+    name = "lang-"+name;
+  }
+  return camelize(name);
+}
+
+function reorderForCompatibility(languages) {
+  let index = languages.findIndex(function(lang) {
+    return lang.name ===  'cpp';
+  });
+  let removed = languages.splice(index, 1);
+  languages.unshift(removed[0]);
+  return languages;
+}
+
 module.exports = {
   name: 'ember-code-block',
 
@@ -20,18 +46,24 @@ module.exports = {
 
     let config = app.project.config(app.env) || {};
     // let addonConfig = config[this.name] || {};
-    let addonConfig = { languages: {only: ['xml', 'json'] }}
+    let addonConfig = {
+      style: 'tomorrow-night-eighties',
+      languages: {
+        // only: ['cos']
+      }
+    }
 
     this.languages = this.getLanguages(addonConfig);
+    this.style = addonConfig.style || "default";
 
     this.import(path.join('vendor', 'highlight', 'highlight.js'));
 
     let importAssert = this.import.bind(this);
     this.languages.forEach((function(language) {
-      importAssert(path.join('vendor', 'highlight', 'languages', `${language}.js`));
+      importAssert(path.join('vendor', 'highlight', `${language.file}`));
     }))
 
-    // app.import('vendor/highlight-style.css');
+    app.import('highlight/styles.css');
   },
 
   getLanguages(config) {
@@ -44,17 +76,37 @@ module.exports = {
       .filter(exclusionFilter(exceptLanguages));
   },
 
-  treeForVendor(tree) {
-    let trees = [];
-    trees.push(this._highlightTree())
+  treeForStyles() {
+    let srcPath = path.join(require.resolve('highlight.js'), '..', '..', 'styles');
 
-    let languageTree = this._languageTree;
+    try {
+      fs.statSync(path.join(srcPath, this.style)).isFile();
+    }catch(err) {
+      this.ui.writeWarnLine('[ember-code-block] style does not exist', this.style);
+      // return null;
+    }
 
-    this.languages.forEach(function(language) {
-      trees.push(languageTree(language))
+    let tree = new Funnel(srcPath, {
+      include: [`${this.style}.css`],
+      annotation: `Funnel: highlight.js style`
     });
 
-    // Push language loader
+    return rename(tree, function() {
+      return `/highlight/styles.css`;
+    });
+  },
+
+  treeForVendor() {
+    let trees = [];
+
+    // Load highlight.js into vendor tree as `highlight`
+    trees.push(this._highlightTree())
+
+    // Load languages into vendor tree as `highlight/<language>`
+    let languageTreeFactory = this._languageTree;
+    this.languages.forEach(function(language) {
+      trees.push(languageTreeFactory(language))
+    });
 
     return mergeTrees(trees);
   },
@@ -64,15 +116,18 @@ module.exports = {
     let languagesPath = path.join(require.resolve('highlight.js'), '../languages')
     fs.readdirSync(languagesPath).map(function(file) {
       let lang = require(path.join(languagesPath, file))(hljs)
-      languages.push(file.split('.')[0])
-      if (lang.aliases) {
-        lang.aliases.forEach(function(alias) {
-          if (languages.indexOf(alias) === -1) {
-            languages.push(alias);
-          }
-        })
+
+      let definition = {
+        aliases: lang.aliases || [],
+        variable: normalizeLanguageName(file.split('.')[0]),
+        name: file.split('.')[0],
+        file: file,
       }
+
+      languages.push(definition)
     })
+
+    languages = reorderForCompatibility(languages);
 
     return languages
   },
@@ -81,17 +136,17 @@ module.exports = {
     let srcPath = path.join(require.resolve('highlight.js'), '..', 'languages');
 
     let tree = new Funnel(srcPath, {
-      include: [`${language}.js`],
-      destDir: `/languages/${language}.js`,
-      annotation: `Funnel: highlight.js language: ${language}`
+      include: [language.file],
+      destDir: language.file,
+      annotation: `Funnel: highlight.js language: ${language.name}`
     });
 
-    let srcTree = new AMDDefineFilter(tree, language, {
+    let srcTree = new AMDDefineFilter(tree, `highlight/languages/${language.name}`, {
       rewriterFunction: rewriteLanguageDefinition
     });
 
     return rename(srcTree, function() {
-      return `/highlight/languages/${language}.js`;
+      return `/highlight/${language.file}`;
     });
   },
 
@@ -105,7 +160,8 @@ module.exports = {
       annotation: `Funnel: highlight.js`
     });
 
-    let srcTree = new AMDDefineFilter(tree, "highlight.js");
+    // console.log(this.languages);
+    let srcTree = new AMDDefineFilter(tree, "highlight", {languages: this.languages});
     return rename(srcTree, function() {
       return `/highlight/highlight.js`;
     });
