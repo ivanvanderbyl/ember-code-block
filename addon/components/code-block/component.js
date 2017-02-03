@@ -3,7 +3,7 @@ import layout from './template';
 import Component from 'ember-component';
 import Highlight from 'highlight';
 
-const { computed } = Ember;
+const { isPresent, computed, String: { htmlSafe } } = Ember;
 
 const CodeBlockComponent = Component.extend({
   layout,
@@ -33,9 +33,13 @@ const CodeBlockComponent = Component.extend({
         config.classPrefix = classPrefix;
       }
 
-      Highlight.configure(config);
-      let result = Highlight.highlightAuto(code);
-      return result.value;
+      if (isPresent(code)) {
+        Highlight.configure(config);
+        let result = Highlight.highlightAuto(code);
+        return htmlSafe(result.value);
+      } else {
+        return '';
+      }
     }
   })
 });

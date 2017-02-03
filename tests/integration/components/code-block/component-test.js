@@ -5,20 +5,13 @@ moduleForComponent('code-block', 'Integration | Component | code block', {
   integration: true
 });
 
-test('it renders', function(assert) {
-  // Set any properties with this.set('myProperty', 'value');
-  // Handle any actions with this.on('myAction', function(val) { ... });
+const codeBlock = `
+var message = "hello world";
+`;
 
-  this.render(hbs`{{code-block}}`);
+test('it renders code', function(assert) {
+  this.set('code', codeBlock);
+  this.render(hbs`{{code-block code}}`);
 
-  assert.equal(this.$().text().trim(), '');
-
-  // Template block usage:
-  this.render(hbs`
-    {{#code-block}}
-      template block text
-    {{/code-block}}
-  `);
-
-  assert.equal(this.$().text().trim(), 'template block text');
+  assert.equal(this.$('pre.hljs code').html().trim(), '<span class="hljs-attribute">var message</span> = <span class="hljs-string">"hello world"</span>;');
 });

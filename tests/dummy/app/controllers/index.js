@@ -1,8 +1,7 @@
-import Ember from 'ember';
+import Controller from 'ember-controller';
 
-export default Ember.Controller.extend({
+export default Controller.extend({
 
-  // code: '<html><body><ul><li>Hello World</li></ul></body></html>'
   code: `import Ember from 'ember';
 import layout from './template';
 import Component from 'ember-component';
