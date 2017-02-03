@@ -3,11 +3,13 @@ import layout from './template';
 import Component from 'ember-component';
 import Highlight from 'highlight';
 
-const { run: { scheduleOnce } } = Ember;
+const { computed } = Ember;
 
 const CodeBlockComponent = Component.extend({
   layout,
   tagName: 'pre',
+
+  classNames: ['hljs'],
 
   language: null,
   tabReplace: ' ',
@@ -15,24 +17,13 @@ const CodeBlockComponent = Component.extend({
 
   code: null,
 
-  didInsertElement() {
-    this.scheduleHighlightCode();
-  },
+  highlightedCode: computed('code', {
+    get() {
+      let code = this.get('code');
+      let tabReplace = this.get('tabReplace');
+      let classPrefix = this.get('classPrefix');
+      let language = this.get('language');
 
-  didReceiveAttrs() {
-    this.scheduleHighlightCode();
-  },
-
-  scheduleHighlightCode() {
-    scheduleOnce('render', this, this.highlightCode);
-  },
-
-  highlightCode() {
-    let tabReplace = this.get('tabReplace');
-    let classPrefix = this.get('classPrefix');
-    let language = this.get('language');
-
-    if (this.element) {
       let config = { tabReplace };
       if (language) {
         config.languages = language;
@@ -43,9 +34,10 @@ const CodeBlockComponent = Component.extend({
       }
 
       Highlight.configure(config);
-      Highlight.highlightBlock(this.element);
+      let result = Highlight.highlightAuto(code);
+      return result.value;
     }
-  }
+  })
 });
 
 CodeBlockComponent.reopenClass({
