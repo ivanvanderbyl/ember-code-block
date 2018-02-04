@@ -1,6 +1,6 @@
 {
   "name": "ember-code-block",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "Simple, effective, and customizable code highlighting for Ember",
   "directories": {
     "doc": "doc",
