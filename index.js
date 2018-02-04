@@ -25,6 +25,15 @@ module.exports = {
 		let config = app.project.config(app.env) || {}
 		let addonConfig = config[this.name] || {}
 
+		if (!Array.isArray(addonConfig.languages)) {
+			this.ui.writeError(
+				`[${
+					this.name
+				}] Languages configuration is invalid, please specify a list of languages to load from highlight.js as languages: ['javascript', 'xml', 'json']`,
+			)
+			return
+		}
+
 		addonConfig = {
 			style: addonConfig.style || DEFAULT_STYLE,
 			languages: [...(addonConfig.languages || ['javascript'])],
