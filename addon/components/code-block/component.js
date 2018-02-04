@@ -1,12 +1,9 @@
 import layout from './template'
 import Component from '@ember/component'
 import Highlight from 'highlight'
-import JS from 'highlight/javascript'
 import { isPresent } from '@ember/utils'
 import { computed } from '@ember/object'
 import { htmlSafe } from '@ember/string'
-
-Highlight.registerLanguage('javascript', JS)
 
 const CodeBlockComponent = Component.extend({
 	layout,

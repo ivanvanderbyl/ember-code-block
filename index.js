@@ -1,6 +1,7 @@
 const path = require('path')
 const Funnel = require('broccoli-funnel')
 const mergeTrees = require('broccoli-merge-trees')
+const writeFile = require('broccoli-file-creator')
 
 function reorderForCompatibility(languages) {
 	let index = languages.findIndex(function(lang) {
@@ -52,10 +53,22 @@ module.exports = {
 
 		// 3. Import stylesheet
 		app.import('highlight/styles.css')
+
+		// 4. Register languages with hljs
+		app.import('vendor/register-hljs-languages.js')
 	},
 
 	treeForVendor() {
-		let trees = [this.highlightTree(), this.languagesTree(this.languages)]
+		let registerFile = writeFile(
+			'register-hljs-languages.js',
+			`
+let Highlight = require('highlight');
+${this.languages
+				.map(lang => `Highlight.registerLanguage('${lang}', require('highlight/${lang}'));`)
+				.join('\n')}
+`,
+		)
+		let trees = [this.highlightTree(), this.languagesTree(this.languages), registerFile]
 
 		return mergeTrees(trees)
 	},

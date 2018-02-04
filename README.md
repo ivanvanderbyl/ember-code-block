@@ -1,6 +1,6 @@
 # ember-code-block
 
-Simple, effective, and customizable code highlighting for Ember.
+Simple, effective, and customizable code highlighting for Ember using highlight.js
 
 # Usage
 
@@ -10,7 +10,7 @@ let code = `
   <body>
     <ul></ul>
   </body>
-</html>`;
+</html>`
 ```
 
 ```hbs
@@ -32,22 +32,22 @@ app's environment:
 
 ```js
 ENV['ember-code-block'] = {
-  languages: {
-    only: ['json', 'handlebars', 'js']
-  }
-};
+	languages: {
+		only: ['json', 'handlebars', 'js'],
+	},
+}
 ```
 
 You will probably want to also configure the `style` (a.k.a theme):
 
 ```js
 ENV['ember-code-block'] = {
-  languages: {
-    only: ['json', 'handlebars', 'js']
-  },
+	languages: {
+		only: ['json', 'handlebars', 'js'],
+	},
 
-  style: 'tomorrow-night-eighties'
-};
+	style: 'tomorrow-night-eighties',
+}
 ```
 
 Due to the way the CSS works, you can only load one theme at a time, so you need
@@ -57,10 +57,10 @@ to configure this on load. This is a limitation of `highlight.js`.
 
 Okay so you've probably looked at the files in this addon and scratched your head,
 wondering what the heck is with all the custom rewriters, loaders, and vendored
-trees. 
+trees.
 
 Well, there's a fine story to tell here. Since we're using `ember-cli`, and this
-is an addon which loads files from a third-party NPM package, there's a couple of 
+is an addon which loads files from a third-party NPM package, there's a couple of
 things we need to do so that Ember can understand it.
 
 Firstly, the original highlight.js NPM module is suited to being loaded by NodeJS,
@@ -73,10 +73,10 @@ to `highlight`, an AMD module which exports a default of the core highlight modu
 This allows us to use the standard ES6 loaders in Ember, so we can `import Highlight from "highlight"`
 and it works exactly as we expect.
 
-The problem here is that we haven't yet loaded any language packs, so to do that 
-we need to 
+The problem here is that we haven't yet loaded any language packs, so to do that
+we need to
 
-1. convert each language to AMD, 
+1. convert each language to AMD,
 2. call `Highlight.registerLanguage(...)` for each language.
 
 That second step usually happens automatically in an include supplied by highlight.js,
