@@ -2,6 +2,7 @@ const path = require('path')
 const Funnel = require('broccoli-funnel')
 const mergeTrees = require('broccoli-merge-trees')
 const writeFile = require('broccoli-file-creator')
+const CJSTransform = require('ember-cli-cjs-transform')
 
 function reorderForCompatibility(languages) {
 	let index = languages.findIndex(function(lang) {
@@ -16,6 +17,10 @@ const DEFAULT_STYLE = 'tomorrow-night-eighties'
 
 module.exports = {
 	name: 'ember-code-block',
+
+	importTransforms() {
+		return CJSTransform.importTransforms()
+	},
 
 	included(app) {
 		this._super.included && this._super.included.apply(this, arguments)
