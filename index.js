@@ -25,6 +25,10 @@ module.exports = {
 		let config = app.project.config(app.env) || {}
 		let addonConfig = config[this.name] || {}
 
+		if (typeof addonConfig.languages === 'string') {
+			addonConfig.languages = [addonConfig.languages]
+		}
+
 		if (!Array.isArray(addonConfig.languages)) {
 			this.ui.writeError(
 				`[${
