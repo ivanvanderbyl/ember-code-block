@@ -73,19 +73,25 @@ module.exports = {
 		app.import('highlight/styles.css')
 
 		// 4. Register languages with hljs
-		app.import('vendor/register-hljs-languages.js')
+		app.import('vendor/register-hljs-languages.js', {
+			using: [{ transformation: 'amd', as: 'highlight/register' }],
+		})
 	},
 
 	treeForVendor() {
-		let registerFile = writeFile(
-			'register-hljs-languages.js',
-			`
-let Highlight = require('highlight');
-${this.languages
-				.map(lang => `Highlight.registerLanguage('${lang}', require('highlight/${lang}'));`)
-				.join('\n')}
-`,
-		)
+		let content = `
+		define(['require'] , function (require) {
+			return function () {
+				let hljs = require('highlight');
+
+				${this.languages
+					.map(lang => `hljs.registerLanguage('${lang}', require('highlight/${lang}'));`)
+					.join('\n')}
+			};
+		});
+		`
+
+		let registerFile = writeFile('register-hljs-languages.js', content)
 		let trees = [this.highlightTree(), this.languagesTree(this.languages), registerFile]
 
 		return mergeTrees(trees)
