@@ -11,7 +11,6 @@ const CodeBlockComponent = Component.extend({
 
 	classNames: ['hljs'],
 
-	language: null,
 	tabReplace: ' ',
 	classPrefix: null,
 
@@ -22,12 +21,8 @@ const CodeBlockComponent = Component.extend({
 			let code = this.get('code')
 			let tabReplace = this.get('tabReplace')
 			let classPrefix = this.get('classPrefix')
-			let language = this.get('language')
 
 			let config = { tabReplace }
-			if (language) {
-				config.languages = [language]
-			}
 
 			if (classPrefix) {
 				config.classPrefix = classPrefix

@@ -38,7 +38,7 @@ module.exports = {
 			this.ui.writeError(
 				`[${
 					this.name
-				}] Languages configuration is invalid, please specify a list of languages to load from highlight.js as languages: ['javascript', 'xml', 'json']`,
+				}] languages configuration is invalid, please specify a list of languages to load from highlight.js as languages: ['javascript', 'xml', 'json']`,
 			)
 			return
 		}
@@ -80,10 +80,8 @@ module.exports = {
 
 	treeForVendor() {
 		let content = `
-		define(['require'] , function (require) {
+		define(['require', 'highlight'] , function (require, hljs) {
 			return function () {
-				let hljs = require('highlight');
-
 				${this.languages
 					.map(lang => `hljs.registerLanguage('${lang}', require('highlight/${lang}'));`)
 					.join('\n')}
