@@ -38,7 +38,7 @@ module.exports = {
 			this.ui.writeError(
 				`[${
 					this.name
-				}] languages configuration is invalid, please specify a list of languages to load from highlight.js as languages: ['javascript', 'xml', 'json']`,
+				}] languages configuration is invalid, please specify a list of languages to load from highlight.js as languages: ['javascript', 'xml', 'json']`
 			)
 			return
 		}
