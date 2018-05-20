@@ -1,8 +1,7 @@
-import Controller from '@ember/controller';
+import Controller from '@ember/controller'
 
 export default Controller.extend({
-
-  code: `import Ember from 'ember';
+	code: `import Ember from 'ember';
 import layout from './template';
 import Component from 'ember-component';
 import Highlight from 'highlight.js';
@@ -56,5 +55,5 @@ CodeBlockComponent.reopenClass({
 });
 
 export default CodeBlockComponent;
-`
-});
+`,
+})

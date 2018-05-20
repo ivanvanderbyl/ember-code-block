@@ -1,1 +1,1 @@
-export { default, initialize } from 'ember-code-block/initializers/register-hljs-langauges';
+export { default, initialize } from 'ember-code-block/initializers/register-hljs-langauges'
