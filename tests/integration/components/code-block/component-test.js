@@ -1,22 +1,22 @@
-import { moduleForComponent, test } from 'ember-qunit'
+import { module, test } from 'qunit'
+import { setupRenderingTest } from 'ember-qunit'
+import { render, find } from '@ember/test-helpers'
 import hbs from 'htmlbars-inline-precompile'
 
-moduleForComponent('code-block', 'Integration | Component | code block', {
-	integration: true,
-})
+module('Integration | Component | code block', function(hooks) {
+	setupRenderingTest(hooks)
 
-const codeBlock = `
-var message = "hello world";
-`
+	const codeBlock = `
+  var message = "hello world";
+  `
 
-test('it renders code', function(assert) {
-	this.set('code', codeBlock)
-	this.render(hbs`{{code-block code}}`)
+	test('it renders code', async function(assert) {
+		this.set('code', codeBlock)
+		await render(hbs`{{code-block code}}`)
 
-	assert.equal(
-		this.$('pre.hljs code')
-			.html()
-			.trim(),
-		'<span class="hljs-attribute">var message</span> = <span class="hljs-string">"hello world"</span>;',
-	)
+		assert.equal(
+			find('pre.hljs code').innerHTML.trim(),
+			'<span class="hljs-keyword">var</span> message = <span class="hljs-string">"hello world"</span>;',
+		)
+	})
 })

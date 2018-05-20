@@ -5,22 +5,23 @@ import { initialize } from 'dummy/initializers/register-hljs-langauges'
 import { module, test } from 'qunit'
 import destroyApp from '../../helpers/destroy-app'
 
-module('Unit | Initializer | register hljs langauges', {
-	beforeEach() {
-		run(() => {
-			this.application = Application.create()
-			this.application.deferReadiness()
-		})
-	},
-	afterEach() {
-		destroyApp(this.application)
-	},
-})
+module('Unit | Initializer | register hljs langauges', function(hooks) {
+  hooks.beforeEach(function() {
+      run(() => {
+          this.application = Application.create()
+          this.application.deferReadiness()
+      })
+  });
 
-// Replace this with your real tests.
-test('it works', function(assert) {
-	initialize(this.application)
+  hooks.afterEach(function() {
+      destroyApp(this.application)
+  });
 
-	// you would normally confirm the results of the initializer here
-	assert.ok(true)
-})
+  // Replace this with your real tests.
+  test('it works', function(assert) {
+      initialize(this.application)
+
+      // you would normally confirm the results of the initializer here
+      assert.ok(true)
+  })
+});
